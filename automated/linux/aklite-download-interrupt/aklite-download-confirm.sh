@@ -8,6 +8,7 @@ OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 export RESULT_FILE
 DEVICE_NAME=$(</etc/hostname)
+export DEVICE_NAME
 TARGET=""
 
 usage() {
@@ -60,6 +61,12 @@ else
     report_fail "ota-signal-present"
     FAILED=1
 fi
+
+if [ ! "${FAILED}" -eq 0 ]; then
+    report_skip "install-pre-received"
+    exit "${FAILED}"
+fi
+
 # wait for 'install-pre' signal
 SIGNAL=$(</var/sota/ota.signal)
 while [ ! "${SIGNAL}" = "install-pre" ]

@@ -8,6 +8,7 @@ OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 export RESULT_FILE
 DEVICE_NAME=$(</etc/hostname)
+export DEVICE_NAME
 TARGET=""
 
 usage() {
@@ -79,8 +80,7 @@ do
     # check if aktualizr-lite log contains timeout
     journalctl --no-pager -u aktualizr-lite
     echo "********************"
-    journalctl --no-pager -u aktualizr-lite | grep "ostree-pull: Receiving objects:"
-    if [ "$?" -eq 0 ]; then
+    if journalctl --no-pager -u aktualizr-lite | grep "ostree-pull: Receiving objects:"; then
         echo "Setting FOUND=1"
         FOUND=1
     fi
