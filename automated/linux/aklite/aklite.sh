@@ -38,6 +38,19 @@ fi
 
 ! check_root && error_msg "You need to be root to run this script."
 create_out_dir "${OUTPUT}"
+# check if aklite daemon is running
+# if not, try to register the device which starts aklite
+systemctl status aktualizr-lite > /dev/null 2>&1
+result=$?
+if [ $result -ne 0 ]; then
+    mkdir -p /etc/sota/conf.d
+    cp z-99-aklite-callback.toml /etc/sota/conf.d/
+    systemctl enable --now lmp-device-auto-register
+    echo "Enabled auto-registration. Sleeping 15s"
+    sleep 15
+fi
+
+
 aktualizr-lite status > "${LOGFILE}"
 if [ -z "${DEVICE_NAME}" ]; then
     warn_msg "DEVICE_NAME empty. Skipping"
