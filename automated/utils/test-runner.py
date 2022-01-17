@@ -1352,6 +1352,8 @@ def main():
                 test["test_uuid"],
             )
         logger.debug("Test parameters: %s" % test)
+        logger.debug("This is correct debug message")
+        logger.debug("This is 2nd correct debug message")
 
         # Create directories and copy files needed.
         setup = TestSetup(test, args)
