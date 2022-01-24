@@ -121,10 +121,25 @@ test_wlan_download() {
     ping -c 4 www.google.com
     check_return "wlan-ping"
     if command -v curl; then
-        curl -OL --interface "${DEVICE}" "${FILE_URL}"
+        curl -OL --interface "${DEVICE}" "${FILE_URL}" &
+        curl_pid=$!
+        while kill -0 $curl_pid
+        do
+            ip -s link show "${DEVICE}"
+            cat /proc/net/wireless 
+            sleep 2
+        done
         check_return "wlan-download"
     elif command -v wget; then
-        wget "${FILE_URL}"
+        wget "${FILE_URL}" &
+        curl_pid=$!
+        while kill -0 $curl_pid
+        do
+            ip -s link show "${DEVICE}"
+            cat /proc/net/wireless 
+            sleep 2
+        done
+        check_return "wlan-download"
     else
         info_msg "cURL and WGET missing, skipping download"
         report_skip "wlan-download"
