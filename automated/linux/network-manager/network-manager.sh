@@ -64,6 +64,8 @@ nmcli -c no general hostname
 check_return "nmcli-general-hostname"
 
 # check networking status
+echo "Checking initial networking connectivity"
+nmcli -c no networking connectivity
 nmcli -c no networking connectivity | grep full
 check_return "nmcli-initial-full-connectivity"
 
