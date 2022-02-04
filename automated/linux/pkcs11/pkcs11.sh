@@ -70,14 +70,14 @@ test_cypher()
     $PTOOL --keypairgen --key-type "${cypher}" --id 01 --label ldts  --token-label fio --pin $PIN
     check_return "$cypher-keypair"
 
-    echo "Get the publick key to pubkey.spki"
+    echo "Get the public key"
     # shellcheck disable=SC2086
-    $PTOOL -l --pin $PIN --id 01 --read-object --type pubkey --output-file pubkey.spki
+    $PTOOL -l --pin $PIN --id 01 --read-object --type pubkey --output-file pubkey.der
     check_return "$cypher-pubkey-read"
 
     echo "hello world" > $FILE
 
-    echo "Create a digest sha256 : hello.hash"
+    echo "Create a digest sha256h"
     openssl dgst -binary -sha256 $FILE > $FILE.hash
 
     # The block below is used to make sure that
@@ -92,14 +92,14 @@ test_cypher()
         INFILE=$FILE
     fi
 
-    echo "Transform pubkey.spki from DER to PEM"
-    openssl "${OPERATION}" -inform DER -outform PEM -in pubkey.spki -pubin > pubkey.pub
+    echo "Transform pubkey from DER to PEM"
+    openssl "${OPERATION}" -inform DER -outform PEM -in pubkey.der -pubin > pubkey.pub
 
-    echo "Sign hello.hash with the PEM key and generate hello.sig signature"
+    echo "Sign hash with the PEM key and generate signature"
     # shellcheck disable=SC2086
     $PTOOL --sign --pin "${PIN}" --id 01 --input-file "${INFILE}" --output-file "${FILE}.sig" --mechanism "${mechanism}" -f openssl
 
-    echo "Use the public key to verify the file signature"
+    echo "Use the public key to verify the signature"
     openssl dgst -sha256 -verify pubkey.pub -signature "${FILE}.sig" "${FILE}"
     check_return "$cypher-pubkey-verify"
 
@@ -117,7 +117,7 @@ test_cypher()
     rm "${FILE}"
     rm "${FILE}.sig"
     rm "${FILE}.hash"
-    rm pubkey.spki
+    rm pubkey.der
     rm pubkey.pub
     se05x_cleanup
 }
