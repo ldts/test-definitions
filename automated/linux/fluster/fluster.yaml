@@ -1,0 +1,26 @@
+metadata:
+    format: Lava-Test Test Definition 1.0
+    name: Fluster
+    description: "Fluster test suite to validate H.264 M2M video decoding"
+
+    maintainer:
+        - jorge.ramirez@oss.qualcomm.com
+    os:
+        - debian
+        - ubuntu
+        - centos
+        - fedora
+        - openembedded
+    scope:
+        - functional
+    devices:
+        - qrb2210-rb1
+
+params:
+    REFERENCE_TEST_SUITE: "JVT-AVC_V1"
+
+run:
+    steps:
+        - cd ./automated/linux/fluster/
+        - ./fluster.sh -t "${REFERENCE_TEST_SUITE}"
+        - ../../utils/send-to-lava.sh ./output/result.txt
